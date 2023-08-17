@@ -10,16 +10,17 @@ import {
 } from "@chakra-ui/react";
 import useGenres, { Genre } from "../hooks/useGenres";
 import { getCroppedImageUrl } from "../services/image-url";
+import { useContext } from "react";
+import GameQueryContext from "../providers/GameProdiver/GameContext";
 
-const GenreList = ({
-  selectedGenre,
-  onChange,
-}: {
-  selectedGenre: Genre | null;
-  onChange: (genre: Genre) => void;
-}) => {
+const GenreList = () => {
+  const { gameQuery, dispatch } = useContext(GameQueryContext);
   const { data, isLoading, error } = useGenres();
   const skeletons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+  const currentGenre: Genre | undefined = data?.results.find(
+    (item) => item.id == gameQuery.genreId
+  );
   return (
     <>
       <Heading fontSize="2xl">Genres</Heading>
@@ -30,8 +31,9 @@ const GenreList = ({
           </ListItem>
         )}
         {/* ------------ Skeletons ------------ */}
+        {/* {isLoading && */}
         {isLoading &&
-          !data.length &&
+          !(data as any)?.results?.length &&
           skeletons.map((item) => (
             <ListItem key={item} paddingY="10px">
               <HStack>
@@ -47,7 +49,7 @@ const GenreList = ({
             </ListItem>
           ))}
         {/* ------------ Skeletons ------------ */}
-        {data.map((item) => (
+        {data?.results.map((item) => (
           <ListItem key={item.id} paddingY="10px">
             <HStack>
               <Image
@@ -59,8 +61,10 @@ const GenreList = ({
               <Button
                 whiteSpace="normal"
                 variant="link"
-                fontWeight={selectedGenre?.id == item.id ? "bold" : ""}
-                onClick={() => onChange(item)}
+                fontWeight={currentGenre?.id == item.id ? "bold" : ""}
+                onClick={() =>
+                  dispatch({ type: "CHANGE_GENRE", genreId: item.id })
+                }
                 className="m-0"
               >
                 {item.name}

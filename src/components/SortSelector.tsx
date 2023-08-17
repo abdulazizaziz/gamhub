@@ -1,13 +1,11 @@
 import { Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import { BsChevronDown } from "react-icons/bs";
 import { SortOrder } from "../hooks/useGames";
+import { useContext } from "react";
+import GameQueryContext from "../providers/GameProdiver/GameContext";
 
-interface Props {
-  onSelect: (sortOrder: SortOrder | null) => void;
-  selectedSortOrder: SortOrder | null;
-}
-
-const SortSelector = ({ onSelect, selectedSortOrder }: Props) => {
+const SortSelector = () => {
+  const { gameQuery, dispatch } = useContext(GameQueryContext);
   const sortOrders = [
     { value: "", label: "Relevance" },
     { value: "-added", label: "Date Added" },
@@ -20,15 +18,18 @@ const SortSelector = ({ onSelect, selectedSortOrder }: Props) => {
   return (
     <Menu>
       <MenuButton as={Button} rightIcon={<BsChevronDown />}>
-        Sort By: {selectedSortOrder ? selectedSortOrder?.label : "Relevance"}
+        Sort By:{" "}
+        {gameQuery.sortOrder ? gameQuery.sortOrder?.label : "Relevance"}
       </MenuButton>
       <MenuList>
         {sortOrders.map((item) => (
           <MenuItem
-            bgColor={selectedSortOrder?.value == item.value ? "gray.800" : ""}
-            color={selectedSortOrder?.value == item.value ? "white" : ""}
+            bgColor={gameQuery.sortOrder?.value == item.value ? "gray.800" : ""}
+            color={gameQuery.sortOrder?.value == item.value ? "white" : ""}
             key={item.value}
-            onClick={() => onSelect(item)}
+            onClick={() =>
+              dispatch({ type: "CHANGE_SORT_ORDER", sortOrder: item })
+            }
           >
             {item.label}
           </MenuItem>

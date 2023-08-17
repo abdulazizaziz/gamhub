@@ -7,6 +7,13 @@ export interface Genre {
   image_background: string;
 }
 
-// const useGenres = () => useData<Genre>("/genres");
-const useGenres = () => ({ data: genres, isLoading: false, error: null });
+const useGenres = () =>
+  useData<Genre>({
+    key: ["genres"],
+    endpoint: `/genres`,
+    queryExtra: {
+      staleTime: 24 * 60 * 60 * 1000, // 24 hours,
+      initialData: { count: genres.length, results: genres, next: null },
+    },
+  });
 export default useGenres;

@@ -1,8 +1,8 @@
-import platforms from "../data/platforms";
-import useData from "./useData";
-import { Platform } from "./useGames";
+import usePlatforms from "./usePlatforms";
 
-// const usePlatform = () => useData<Platform>("/platforms");
-const usePlatform = () => ({ data: platforms, isLoading: false, error: null });
+const usePlatform = (id?: number) => {
+  const { data: platforms } = usePlatforms();
+  return platforms?.results.find((item) => item.id == id);
+};
 
 export default usePlatform;
